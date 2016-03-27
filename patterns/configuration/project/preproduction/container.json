@@ -1,0 +1,21 @@
+{
+	"Profile" : {
+		"Type" : "Container",
+		"Schema" : {
+			"Name" : "Container",
+			"MinimumVersion" : {
+				"Major" : 1
+			}
+		},
+		"Title" : "Preproduction Environment",
+		"Version" :	{
+				"Major" : 1,
+				"Minor" : 0
+		}
+	},
+	
+	"Container" : {
+		"Title" : "Preproduction Environment",
+		"Environment" : "preprod"
+	}
+}

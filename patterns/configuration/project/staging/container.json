@@ -1,0 +1,21 @@
+{
+	"Profile" : {
+		"Type" : "Container",
+		"Schema" : {
+			"Name" : "Container",
+			"MinimumVersion" : {
+				"Major" : 1
+			}
+		},
+		"Title" : "Staging Environment",
+		"Version" :	{
+				"Major" : 1,
+				"Minor" : 0
+		}
+	},
+	
+	"Container" : {
+		"Title" : "Staging Environment",
+		"Environment" : "stg"
+	}
+}

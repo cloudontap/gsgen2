@@ -1,0 +1,21 @@
+{
+	"Profile" : {
+		"Type" : "Container",
+		"Schema" : {
+			"Name" : "Container",
+			"MinimumVersion" : {
+				"Major" : 1
+			}
+		},
+		"Title" : "Integration Environment",
+		"Version" :	{
+				"Major" : 1,
+				"Minor" : 0
+		}
+	},
+	
+	"Container" : {
+		"Title" : "Integration Environment",
+		"Environment" : "int"
+	}
+}

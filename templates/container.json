@@ -1,0 +1,37 @@
+{
+	"Profile" : {
+		"Type" : "Container",
+		"Schema" : {
+			"Name" : "Container",
+			"MinimumVersion" : {
+				"Major" : 1
+			}
+		},
+		"Title" : "Container Details",
+		"Description" : "Details of a container",
+		"Version" :	{
+				"Major" : 1,
+				"Minor" : 0
+		}
+	},
+	
+	"Container" : {
+		"Title" : "",
+		"Id" : "",
+		"Name" : "",
+		"Description" : "",
+		"Region" : "ap-southeast-2",
+		"Environment" : "alm, dev, int, aat, uat, preprod, prod, trn",
+		"Category" : "alm, dev, test, stg, prod",
+		"SSHPerContainer" : false,
+		"MultiAZ" : false,
+		"BClass" : "10.0",
+		"InternetAccess" : true,
+		"DNSSupport" : true,
+		"DNSHostnames" : false,
+		"NAT" : {
+			"MultiAZ" : false
+		},
+		"CapacityProfile" : ""
+	}
+}

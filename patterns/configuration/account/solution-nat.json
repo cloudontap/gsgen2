@@ -1,0 +1,103 @@
+{
+	"Profile" : {
+		"Type" : "Solution",
+		"Schema" : {
+			"Name" : "Solution",
+			"MinimumVersion" : {
+				"Major" : 1
+			}
+		},
+		"Title" : "Solution Details",
+		"Description" : "Details of solution to be deployed within a container",
+		"Version" :	{
+				"Major" : 1,
+				"Minor" : 0
+		}
+	},
+	
+	"Solution" : {
+		"Title" : "Standalone ALM server exposed via load balancer",
+		"Id" : "almnat",
+		"Name" : "almnat",
+		"Description" : "",
+		"SSHPerContainer" : false,
+		"Container" : {
+			"BClass" : "10.0",
+			"InternetAccess" : true,
+			"DNSSupport" : true,
+			"DNSHostnames" : false,
+			"NAT" : {
+				"MultiAZ" : false
+			}
+		},
+		"CapacityProfile" : "default",
+		"Tiers" : [
+			{
+				"Id" : "elb",
+				"Components" : [
+					{
+						"Title" : "Port 443 protection",
+						"Id" : "alm",
+						"Name" : "alm",
+						"ELB" : {
+							"PortMappings" : ["https"]
+						}
+					}
+				]
+			},
+			{
+				"Id" : "web",
+				"Components" : [
+					{
+						"Title" : "ALM Server",
+						"Id" : "alm",
+						"Name" : "alm",
+						"Role" : "ALM",
+						"EC2" : {
+							"Ports" : ["https"],
+							"LoadBalanced" : true,
+							"FixedIP" : false,
+							"Storage" : {
+								"Volumes" : [
+									{
+										"Device" : "/dev/sdp",
+										"Size" : "100"
+									}
+								]
+							}
+						}
+					}
+				]
+			},
+			{
+				"Id" : "mgmt"
+			}
+		],
+		"SharedComponents" : [
+			{
+				"Title" : "Contractor performance metrics",
+				"Id" : "metrics",
+				"Name" : "metrics",
+				"SharedRegion" : "ap-southeast-2",
+				"S3" : {
+				}
+			},
+			{
+				"Title" : "Docker images",
+				"Id" : "docker",
+				"Name" : "docker",
+				"SharedRegion" : "ap-southeast-2",
+				"S3" : {
+				}
+			},
+			{
+				"Title" : "Binary images",
+				"Id" : "binaries",
+				"Name" : "binaries",
+				"SharedRegion" : "ap-southeast-2",
+				"S3" : {
+				}
+			}
+		]
+	}
+}

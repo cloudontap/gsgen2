@@ -1,0 +1,933 @@
+{
+	"Profile" : {
+		"Type" : "MasterData",
+		"Schema" : {
+			"Name" : "MasterData",
+			"MinimumVersion" : {
+				"Major" : 1
+			}
+		},
+		"Title" : "Master Reference Lists",
+		"Description" : "Standard configurations and reference material",
+		"Version" :	{
+			"Major" : 1,
+			"Minor" : 0
+		}
+	},
+	
+	"Regions" : {
+		"ap-northeast-1" : {
+			"Id" : "ap-northeast-1",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 22,
+					"AWSZone" : "ap-northeast-1a",
+					"Locality" : "Tokyo"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 4,
+					"CIDRMask" : 22,
+					"AWSZone" : "ap-northeast-1b",
+					"Locality" : "Tokyo"
+				},
+				{
+					"Title" : "Zone C",
+					"Id" : "c",
+					"Name" : "c",
+					"Description" : "Zone C",
+					"CClassOffset" : 8,
+					"CIDRMask" : 22,
+					"AWSZone" : "ap-northeast-1c",
+					"Locality" : "Tokyo"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "582318560864"
+			}
+		},
+		"ap-northeast-2" : {
+			"Id" : "ap-northeast-2",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 21,
+					"AWSZone" : "ap-northeast-2a",
+					"Locality" : "Seoul"
+				},
+				{
+					"Title" : "Zone C",
+					"Id" : "c",
+					"Name" : "c",
+					"Description" : "Zone C",
+					"CClassOffset" : 8,
+					"CIDRMask" : 21,
+					"AWSZone" : "ap-northeast-2c",
+					"Locality" : "Seoul"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "600734575887"
+			}
+		},
+		"ap-southeast-1" : {
+			"Id" : "ap-southeast-1",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 21,
+					"AWSZone" : "ap-southeast-1a",
+					"Locality" : "Singapore"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Singapore Zone B",
+					"CClassOffset" : 8,
+					"CIDRMask" : 21,
+					"AWSZone" : "ap-southeast-1b",
+					"Locality" : "Singapore"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "114774131450"
+			}
+		},
+		"ap-southeast-2" : {
+			"Id" : "ap-southeast-2",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 21,
+					"AWSZone" : "ap-southeast-2a",
+					"Locality" : "Sydney"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 8,
+					"CIDRMask" : 21,
+					"AWSZone" : "ap-southeast-2b",
+					"Locality" : "Sydney"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "783225319266"
+			},
+			"AMIs" : {
+				"Centos" : {
+					"NAT" : "ami-e3217a80",
+					"EC2" : "ami-48d38c2b",
+					"ECS" : "ami-75a38416"
+				}
+			}
+		},
+		"eu-central-1" : {
+			"Id" : "eu-central-1",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 21,
+					"AWSZone" : "eu-central-1a",
+					"Locality" : "Frankfurt"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 8,
+					"CIDRMask" : 21,
+					"AWSZone" : "eu-central-1b",
+					"Locality" : "Frankfurt"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "054676820928"
+			}
+		},
+		"eu-west-1" : {
+			"Id" : "eu-west-1",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 22,
+					"AWSZone" : "eu-west-1a",
+					"Locality" : "Ireland"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 4,
+					"CIDRMask" : 22,
+					"AWSZone" : "eu-west-1b",
+					"Locality" : "Ireland"
+				},
+				{
+					"Title" : "Zone C",
+					"Id" : "c",
+					"Name" : "c",
+					"Description" : "Zone C",
+					"CClassOffset" : 8,
+					"CIDRMask" : 22,
+					"AWSZone" : "eu-west-1c",
+					"Locality" : "Ireland"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "156460612806"
+			}
+		},
+		"sa-east-1" : {
+			"Id" : "sa-east-1",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 21,
+					"AWSZone" : "sa-east-1a",
+					"Locality" : "Sao Paulo"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 8,
+					"CIDRMask" : 21,
+					"AWSZone" : "sa-east-1b",
+					"Locality" : "Sao Paulo"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "507241528517"
+			}
+		},
+		"us-east-1" : {
+			"Id" : "us-east-1",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 22,
+					"AWSZone" : "us-east-1a",
+					"Locality" : "North Virginia"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 4,
+					"CIDRMask" : 22,
+					"AWSZone" : "us-east-1b",
+					"Locality" : "North Virginia"
+				},
+				{
+					"Title" : "Zone C",
+					"Id" : "c",
+					"Name" : "c",
+					"Description" : "Zone C",
+					"CClassOffset" : 8,
+					"CIDRMask" : 22,
+					"AWSZone" : "us-east-1c",
+					"Locality" : "North Virginia"
+				},
+				{
+					"Title" : "Zone D",
+					"Id" : "d",
+					"Name" : "d",
+					"Description" : "Zone D",
+					"CClassOffset" : 12,
+					"CIDRMask" : 22,
+					"AWSZone" : "us-east-1e",
+					"Locality" : "North Virginia"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "127311923021"
+			}
+		},
+		"us-west-1" : {
+			"Id" : "us-west-1",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 21,
+					"AWSZone" : "us-west-1b",
+					"Locality" : "North California"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 8,
+					"CIDRMask" : 21,
+					"AWSZone" : "us-west-1c",
+					"Locality" : "North California"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "027434742980"
+			}
+		},
+		"us-west-2" : {
+			"Id" : "us-west-2",
+			"Zones" : [
+				{
+					"Title" : "Zone A",
+					"Id" : "a",
+					"Name" : "a",
+					"Description" : "Zone A",
+					"CClassOffset" : 0,
+					"CIDRMask" : 22,
+					"AWSZone" : "us-west-2a",
+					"Locality" : "Oregon"
+				},
+				{
+					"Title" : "Zone B",
+					"Id" : "b",
+					"Name" : "b",
+					"Description" : "Zone B",
+					"CClassOffset" : 4,
+					"CIDRMask" : 22,
+					"AWSZone" : "us-west-2b",
+					"Locality" : "Oregon"
+				},
+				{
+					"Title" : "Zone C",
+					"Id" : "c",
+					"Name" : "c",
+					"Description" : "Zone C",
+					"CClassOffset" : 8,
+					"CIDRMask" : 22,
+					"AWSZone" : "us-west-2c",
+					"Locality" : "Oregon"
+				}
+			],
+			"Accounts" : {
+				"ELB" : "797873946194"
+			},
+			"AMIs" : {
+				"Centos" : {
+					"NAT" : "ami-77a4b816",
+					"EC2" : "ami-f0091d91",
+					"ECS" : "ami-02a24162"
+				}
+			}
+		}
+	},
+
+	"Environments" : {
+		"alm" : {
+			"Title" : "Application Lifecycle Management Environment",
+			"Id" : "alm",
+			"Name" : "alm",
+			"Description" : "Normally only one environment for the alm. Entry mainly here for naming consistency",
+			"Category" : "alm"
+		},
+		"dev" : {
+			"Title" : "Development Environment",
+			"Id" : "dev",
+			"Name" : "development",
+			"Description" : "Potentially holds individual dev servers for multiple devs",
+			"Category" : "dev"			
+		},
+		"alpha" : {
+			"Title" : "Alpha Environment",
+			"Id" : "alpha",
+			"Name" : "alpha",
+			"Description" : "Prototyping environment according to DTO classification",
+			"Category" : "test"
+		},
+		"beta" : {
+			"Title" : "Beta Environment",
+			"Id" : "beta",
+			"Name" : "beta",
+			"Description" : "Preproduction environment according to DTO classification",
+			"Category" : "stg",
+			"MultiAZ" : true
+		},
+		"int" : {
+			"Title" : "Integration Environment",
+			"Id" : "int",
+			"Name" : "integration",
+			"Description" : "Mainly for devs to confirm components work together",
+			"Category" : "test"
+		},
+		"aat" : {
+			"Title" : "Automated Acceptance Environment",
+			"Id" : "aat",
+			"Name" : "automatedacceptance",
+			"Description" : "Execution of automated tests",
+			"Category" : "test"
+		},
+		"uat" : {
+			"Title" : "User Acceptance Environment",
+			"Id" : "uat",
+			"Name" : "useracceptance",
+			"Description" : "Manual customer testing",
+			"Category" : "test"
+		},
+		"preprod" : {
+			"Title" : "Preproduction Environment",
+			"Id" : "preprod",
+			"Name" : "preproduction",
+			"Description" : "Deployment, performance, volume testing",
+			"Category" : "stg",
+			"MultiAZ" : true
+		},
+		"stg" : {
+			"Title" : "Staging Environment",
+			"Id" : "stg",
+			"Name" : "staging",
+			"Description" : "Deployment, performance, volume testing. Staging is used both as a specific environment and as a category of environments.",
+			"Category" : "stg",
+			"MultiAZ" : true
+		},
+		"prod" : {
+			"Title" : "Production Environment",
+			"Id" : "prod",
+			"Name" : "production",
+			"Description" : "Kind of obvious...",
+			"Category" : "prod",
+			"MultiAZ" : true
+		},
+		"trn" : {
+			"Title" : "Training Environment",
+			"Id" : "trn",
+			"Name" : "training",
+			"Description" : "",
+			"Category" : "prod"
+		}
+	},
+
+	"Categories" : {
+		"alm" : {
+			"Title" : "Application Lifecycle Management Environments",
+			"Id" : "alm",
+			"Name" : "alm",
+			"Description" : ""
+		},
+		"dev" : {
+			"Title" : "Development Environments",
+			"Id" : "dev",
+			"Name" : "development",
+			"Description" : ""
+		},
+		"test" : {
+			"Title" : "Testing Environments",
+			"Id" : "test",
+			"Name" : "testing",
+			"Description" : ""
+		},
+		"stg" : {
+			"Title" : "Staging Environments",
+			"Id" : "stg",
+			"Name" : "staging",
+			"Description" : ""
+		},
+		"prod" : {
+			"Title" : "Production Environments",
+			"Id" : "prod",
+			"Name" : "production",
+			"Description" : ""
+		}
+	},
+
+	"Tiers" : {
+		"web" : {
+			"Title" : "Web Tier",
+			"Id" : "web",
+			"Name" : "web",
+			"Description" : "Supports HMI",
+			"StartingCClass" : 0,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"msg" : {
+			"Title" : "Messaging Tier",
+			"Id" : "msg",
+			"Name" : "messaging",
+			"Description" : "Supports system-to-system based interactions/services",
+			"StartingCClass" : 16,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"app" : {
+			"Title" : "Applications Tier",
+			"Id" : "app",
+			"Name" : "application",
+			"Description" : "Supports application logic execution",
+			"StartingCClass" : 32,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"db" : {
+			"Title" : "Database Tier",
+			"Id" : "db",
+			"Name" : "database",
+			"Description" : "Supports long term storage of content and customer data",
+			"StartingCClass" : 48,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["db"]
+		},
+		"dir" : {
+			"Title" : "Directories Tier",
+			"Id" : "dir",
+			"Name" : "directories",
+			"Description" : "Supports directories or domain controllers",
+			"StartingCClass" : 64,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"ana" : {
+			"Title" : "Analytics Tier",
+			"Id" : "ana",
+			"Name" : "analytics",
+			"Description" : "Suports things like search engines",
+			"StartingCClass" : 80,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["ana"]
+		},
+		"spare-96" : {
+			"Title" : "Spare-96",
+			"Id" : "",
+			"Name" : "",
+			"Description" : "",
+			"StartingCClass" : 96,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"spare-112" : {
+			"Title" : "Spare-112",
+			"Id" : "",
+			"Name" : "",
+			"Description" : "",
+			"StartingCClass" : 112,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"elb" : {
+			"Title" : "External Load Balancer Tier",
+			"Id" : "elb",
+			"Name" : "elb",
+			"Description" : "Publically accessible application load balancers",
+			"StartingCClass" : 128,
+			"RouteTable" : "external",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"ilb" : {
+			"Title" : "Internal Load Balancer Tier",
+			"Id" : "ilb",
+			"Name" : "ilb",
+			"Description" : "Internally accessible application load balancers",
+			"StartingCClass" : 144,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"spare-160" : {
+			"Title" : "Spare-160",
+			"Id" : "",
+			"Name" : "",
+			"Description" : "",
+			"StartingCClass" : 160,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"spare-176" : {
+			"Title" : "Spare-176",
+			"Id" : "",
+			"Name" : "",
+			"Description" : "",
+			"StartingCClass" : 176,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"spare-192" : {
+			"Title" : "Spare-192",
+			"Id" : "",
+			"Name" : "",
+			"Description" : "",
+			"StartingCClass" : 192,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"spare-208" : {
+			"Title" : "Spare-208",
+			"Id" : "",
+			"Name" : "",
+			"Description" : "",
+			"StartingCClass" : 208,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"spare-224" : {
+			"Title" : "Spare-224",
+			"Id" : "",
+			"Name" : "",
+			"Description" : "",
+			"StartingCClass" : 224,
+			"RouteTable" : "internal",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		},
+		"mgmt" : {
+			"Title" : "Management Tier",
+			"Id" : "mgmt",
+			"Name" : "management",
+			"Description" : "Supports vpn based host access and internet access for internal hosts",
+			"StartingCClass" : 240,
+			"RouteTable" : "external",
+			"NetworkACL" : "open",
+			"Slices" : ["svr"]
+		}
+	},
+
+	"RouteTables" : {
+		"internal" : {
+			"Title" : "Internal Subnet Route Table",
+			"Id" : "internal",
+			"Name" : "internal",
+			"Description" : "Route table supporting routing only to local subnets - default route always present. No internet access provided.",
+			"Routes" : [
+			],
+			"Private" : true
+		},
+		"external" : {
+			"Title" : "External Subnet Route Table",
+			"Id" : "external",
+			"Name" : "external",
+			"Description" : "Route table supporting direct internet access",
+			"Routes" : [
+				{
+					"Id" : "gateway",
+					"Type" : "gateway"
+				}
+			]
+		}
+	},
+	
+	"NetworkACLs" : {
+		"open" : {
+			"Title" : "Completely open subnet",
+			"Id" : "open",
+			"Name" : "open",
+			"Rules" : {
+				"Inbound" : [
+					{
+						"Id" : "all",
+						"RuleNumber" : 100,
+						"Protocol" : "all",
+						"CIDRBlock" : "0.0.0.0/0",
+						"Allow" : true
+					}
+				],
+				"Outbound"  : [
+					{
+						"Id" : "all",
+						"RuleNumber" : 100,
+						"Protocol" : "all",
+						"CIDRBlock" : "0.0.0.0/0",
+						"Allow" : true
+					}
+				]
+			}
+		}
+	},
+
+	"Storage" : {
+		"default" : {
+			"EC2" : {
+				"Volumes" : [
+					{
+						"Device" : "/dev/sdp",
+						"Size" : "30"
+					}
+				]
+			},
+			"ECS" : {
+				"Volumes" : [
+				]
+			}
+		}
+	},
+
+	"Processors" : {
+		"default" : {
+			"NAT" : {
+				"Processor" : "t2.micro"
+			},
+			"EC2" : {
+				"Processor" : "t2.micro"
+			},
+			"ECS" : {
+				"Processor" : "t2.micro",
+				"MinPerZone" : 1,
+				"MaxPerZone" : 1,
+				"DesiredPerZone" : 1,
+				"Cpu" : 1024,
+				"Memory" : 1024
+
+			},
+			"ElastiCache" : {
+				"Processor" : "cache.t2.micro",
+				"CountPerZone" : 1
+			},
+			"RDS" : {
+				"Processor" : "db.t2.small"
+			}
+		}
+	},
+	
+	"Ports" : {
+		"elasticsearch" : {
+			"Port" : 9200,
+			"Protocol" : "HTTP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"http" : {
+			"Port" : 80,
+			"Protocol" : "HTTP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"httpalt" : {
+			"Port" : 8080,
+			"Protocol" : "HTTP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"https" : {
+			"Port" : 443,
+			"Protocol" : "HTTPS",
+			"IPProtocol" : "tcp",
+			"Certificate" : true,
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"kibana" : {
+			"Port" : 5601,
+			"Protocol" : "HTTP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"memcached" : {
+			"Port" : 11211,
+			"IPProtocol" : "tcp"
+		},
+		"mongo" : {
+			"Port" : 27017,
+			"IPProtocol" : "tcp"
+		},
+		"mysql" : {
+			"Port" : 3306,
+			"IPProtocol" : "tcp"
+		},
+		"node" : {
+			"Port" : 9000,
+			"Protocol" : "HTTP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"play" : {
+			"Port" : 9000,
+			"Protocol" : "HTTP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"playws" : {
+			"Port" : 9000,
+			"Protocol" : "TCP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Protocol" : "HTTP",
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"postgresql" : {
+			"Port" : 5432,
+			"IPProtocol" : "tcp"
+		},
+		"redis" : {
+			"Port" : 6379,
+			"IPProtocol" : "tcp"
+		},
+		"ssh" : {
+			"Port" : 22,
+			"IPProtocol" : "tcp"
+		},
+		"ws" : {
+			"Port" : 80,
+			"Protocol" : "TCP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		},
+		"wss" : {
+			"Port" : 443,
+			"Protocol" : "SSL",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "3",
+				"UnhealthyThreshold" : "5",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
+		}
+	},
+	
+	"PortMappings" : {
+		"elasticsearch" : {
+			"Source" : "https",
+			"Destination" : "elasticsearch"
+		},
+		"http" : {
+			"Source" : "http",
+			"Destination" : "http"
+		},
+		"httpalt" : {
+			"Source" : "http",
+			"Destination" : "httpalt"
+		},
+		"https" : {
+			"Source" : "https",
+			"Destination" : "http"
+		},
+		"kibana" : {
+			"Source" : "https",
+			"Destination" : "kibana"
+		},
+		"node" : {
+			"Source" : "https",
+			"Destination" : "node"
+		},
+		"play" : {
+			"Source" : "https",
+			"Destination" : "play"
+		},
+		"playwss" : {
+			"Source" : "wss",
+			"Destination" : "playws"
+		},
+		"ws" : {
+			"Source" : "ws",
+			"Destination" : "ws"
+		},
+		"wss" : {
+			"Source" : "wss",
+			"Destination" : "ws"
+		}
+	}
+}
+

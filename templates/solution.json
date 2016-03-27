@@ -1,0 +1,83 @@
+{
+	"Profile" : {
+		"Type" : "Solution",
+		"Schema" : {
+			"Name" : "Solution",
+			"MinimumVersion" : {
+				"Major" : 1
+			}
+		},
+		"Title" : "Solution Details",
+		"Version" :	{
+				"Major" : 1,
+				"Minor" : 0
+		}
+	},
+	
+	"Solution" : {
+		"Title" : "",
+		"Id" : "",
+		"Name" : "",
+		"Description" : "",
+		"Region" : "",
+		"MultiAZ" : false,
+		"SSHPerContainer" : false,
+		"Container" : {
+			"BClass" : "10.0",
+			"InternetAccess" : true,
+			"DNSSupport" : true,
+			"DNSHostnames" : false,
+			"NAT" : {
+				"MultiAZ" : false
+			},
+		},
+		"CapacityProfile" : "default",
+		"Tiers" : [
+			{
+				"Id" : ""
+				"Components" : [
+					{
+						"Title" : "",
+						"Id" : "",
+						"Name" : "",
+						"Description" : "",
+						"Role" : "",
+						"S3" : {
+						}
+						"ELB" : {
+							"PortMappings" : [ "", "" ]
+						},
+						"ECS" : {
+							"Ports" : ["http"]
+						}
+						"ElastiCache" : {
+							"Engine" : "",
+							"Port" : ""
+						}
+						"RDS" : {
+							"Engine" : "",
+							"Size" : 0,
+							"Port" : "",
+							"Backup" : {
+								"RetentionPeriod" : 35
+							}
+						}
+					}
+				],
+			}
+		],
+		"SharedComponents" : [
+			{
+				"Title" : "",
+				"Id" : "",
+				"Name" : "",
+				"Description" : "",
+				"Region" : "",
+				"S3" : {
+				}
+				"SNS" : {
+				}
+			}
+		]
+	}
+}
