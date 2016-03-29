@@ -342,6 +342,7 @@
 					[#-- EC2 --]
 					[#if component.EC2??]
 						[#assign ec2 = component.EC2]
+						[#assign fixedIP = ec2.FixedIP?? && ec2.FixedIP]
 						[#list ec2.Ports as port]
 							"securityGroupIngressX${tier.Id}X${component.Id}X${ports[port].Port?c}" : {
 							  "Type" : "AWS::EC2::SecurityGroupIngress",
@@ -519,7 +520,7 @@
 									"Monitoring" : false,
 									"NetworkInterfaces" : [
 										{
-											"AssociatePublicIpAddress" : ${(((solutionTier.RouteTable!tier.RouteTable) == "external") && !ec2.FixedIP)?string("true","false")},
+											"AssociatePublicIpAddress" : ${(((solutionTier.RouteTable!tier.RouteTable) == "external") && !fixedIP)?string("true","false")},
 											"DeleteOnTermination" : true,
 											"DeviceIndex" : "0",
 											"SubnetId" : "${getKey("subnetX"+tier.Id+"X"+zone.Id)}",
@@ -553,8 +554,8 @@
 								  ,"DependsOn" : "elbXelbX${component.Id}"
 								  [/#if]
 								}
-								[#if ec2.FixedIP]
-								,"ec2EIPX${tier.Id}X${component.Id}X${zone.Id}": {
+								[#if fixedIP]
+								,"eipX${tier.Id}X${component.Id}X${zone.Id}": {
 								   "Type" : "AWS::EC2::EIP",
 								   "Properties" : {
 									"InstanceId" : { "Ref" : "ec2InstanceX${tier.Id}X${component.Id}X${zone.Id}" },
@@ -575,17 +576,26 @@
 							[#assign maxSize = maxSize * zoneCount]
 						[/#if]
 						[#assign storageProfile = getStorage(tier, component, "ECS")]
-						[#assign assignEIP = ecs.AssignEIP?? && ecs.AssignEIP]
+						[#assign fixedIP = ecs.FixedIP?? && ecs.FixedIP]
 						[#if ecs.Ports??]
 							[#list ecs.Ports as port]
-								"securityGroupIngressX${tier.Id}X${component.Id}X${ports[port].Port?c}" : {
+								[#if port?is_hash]
+									[#assign portId = port.Id]
+								[#else]
+									[#assign portId = port]
+								[/#if]
+								"securityGroupIngressX${tier.Id}X${component.Id}X${ports[portId].Port?c}" : {
 								  "Type" : "AWS::EC2::SecurityGroupIngress",
 								  "Properties" : {
 									"GroupId": {"Ref" : "securityGroupX${tier.Id}X${component.Id}"},
-									"IpProtocol": "${ports[port].IPProtocol}", 
-									"FromPort": "${ports[port].Port?c}", 
-									"ToPort": "${ports[port].Port?c}", 
-									"CidrIp": "0.0.0.0/0"
+									"IpProtocol": "${ports[portId].IPProtocol}", 
+									"FromPort": "${ports[portId].Port?c}", 
+									"ToPort": "${ports[portId].Port?c}", 
+									[#if fixedIP && port?is_hash && port.ELB??]
+										"SourceSecurityGroupId": "${getKey("securityGroupXelbX"+port.ELB)}"
+									[#else]
+										"CidrIp": "0.0.0.0/0"
+									[/#if]
 								  }
 								},
 							[/#list]
