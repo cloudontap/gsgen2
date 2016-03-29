@@ -570,7 +570,12 @@
 					[#if component.ECS??]
 						[#assign ecs = component.ECS]
 						[#assign processorProfile = getProcessor(tier, component, "ECS")]
+						[#assign maxSize = processorProfile.MaxPerZone]
+						[#if multiAZ]
+							[#assign maxSize = maxSize * zoneCount]
+						[/#if]
 						[#assign storageProfile = getStorage(tier, component, "ECS")]
+						[#assign assignEIP = ecs.AssignEIP?? && ecs.AssignEIP]
 						[#if ecs.Ports??]
 							[#list ecs.Ports as port]
 								"securityGroupIngressX${tier.Id}X${component.Id}X${ports[port].Port?c}" : {
@@ -675,14 +680,24 @@
 							"ManagedPolicyArns" : ["arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"]
 						  }
 						},
-	
+
+						[#if assignEIP]
+							[#list 1..maxCount as index]
+								"eipX${tier.Id}X${component.Id}X${index}": {
+									"Type" : "AWS::EC2::EIP",
+									"Properties" : {
+										"Domain" : "vpc"
+									}
+								},
+							[/#list]
+						[/#if]
+						
 						"asgX${tier.Id}X${component.Id}": {
 						  "Type": "AWS::AutoScaling::AutoScalingGroup",
 						  "Metadata": {
 							"AWS::CloudFormation::Init": {
 							  "configSets" : {
-								"ecs" : ["dirs", "bootstrap", "ecs"],
-								"log" : ["dirs", "bootstrap", "ecs", "log"]
+								"ecs" : ["dirs", "bootstrap", "ecs"]
 							  },
 							  "dirs": {
 								"commands": {
@@ -741,6 +756,20 @@
 									"command" : "/opt/gosource/bootstrap/init.sh",
 									"ignoreErrors" : "false"
 								  }
+								  [#if assignEIP]
+									  ,"03AssignEIP" : {
+								  		"command" : "/opt/gosource/bootstrap/eip.sh",
+								  		"env" : { 
+								  			"EIP_ALLOCID" : { "Fn::Join" : [" ", [					  			
+								  				[#list 1..maxCount as index]
+								  					{ "Fn::GetAtt" : ["eipX${tier.Id}X${component.Id}X${index}", "AllocationId"] }[#if index != maxCount],[/#if]
+								  				[/#list]
+								  			  ]]
+								  			}
+								  		},
+								  		"ignoreErrors" : "false"
+								  		}					
+								  [/#if]
 								}
 							  },
 							  "ecs": {
@@ -758,22 +787,6 @@
 										"ignoreErrors" : "false"
 									}
 								}
-							  },
-							  "log": {
-								"commands": {
-									"01LogStash" : {
-										"command" : "/opt/gosource/bootstrap/logstash.sh",
-										"ignoreErrors" : "false"
-									},
-									"02GeoIP" : {
-										"command" : "/opt/gosource/bootstrap/geoip.sh",
-										"ignoreErrors" : "false"
-									},
-									"03AWSLogs" : {
-										"command" : "/opt/gosource/bootstrap/awslogs.sh",
-										"ignoreErrors" : "false"
-									}
-								}
 							  }
 							}
 						  },
@@ -782,7 +795,7 @@
 							"LaunchConfigurationName": {"Ref": "launchConfigX${tier.Id}X${component.Id}"},
 							[#if multiAZ]
 								"MinSize": "${processorProfile.MinPerZone * zoneCount}",
-								"MaxSize": "${processorProfile.MaxPerZone * zoneCount}",
+								"MaxSize": "${maxSize}",
 								"DesiredCapacity": "${processorProfile.DesiredPerZone * zoneCount}",
 								"VPCZoneIdentifier": [ 
 									[#list regionObject.Zones as zone]
@@ -791,7 +804,7 @@
 								],
 							[#else]
 								"MinSize": "${processorProfile.MinPerZone}",
-								"MaxSize": "${processorProfile.MaxPerZone}",
+								"MaxSize": "${maxSize}",
 								"DesiredCapacity": "${processorProfile.DesiredPerZone}",
 								"VPCZoneIdentifier" : ["${getKey("subnetX"+tier.Id+"X"+firstZone.Id)}"],
 							[/#if]
@@ -1086,6 +1099,11 @@
 			[#list solutionTier.Components as component]
 				[#assign slices = component.Slices!solutionTier.Slices!tier.Slices]
 				[#if !(slice??) || (slices?seq_contains(slice))]
+					[#if component.MultiAZ??] 
+						[#assign multiAZ =  component.MultiAZ]
+					[#else]
+						[#assign multiAZ =  solnMultiAZ]
+					[/#if]
 					[#if ! component.S3??]
 						[#if count > 0],[/#if]
 						"securityGroupX${tier.Id}X${component.Id}" : {
@@ -1128,6 +1146,7 @@
 					[/#if]
 					[#-- ECS --]
 					[#if component.ECS??]
+						[#assign ecs = component.ECS]
 						[#if count > 0],[/#if]
 						"ecsX${tier.Id}X${component.Id}" : {
 							"Value" : { "Ref" : "ecsX${tier.Id}X${component.Id}" }
@@ -1144,6 +1163,21 @@
 						"roleX${tier.Id}X${component.Id}XserviceXarn" : {
 							"Value" : { "Fn::GetAtt" : ["roleX${tier.Id}X${component.Id}Xservice", "Arn"] }
 						}
+						[#if ecs.AssignEIP?? && ecs.AssignEIP]
+							[#assign processorProfile = getProcessor(tier, component, "ECS")]
+							[#assign maxSize = processorProfile.MaxPerZone]
+							[#if multiAZ]
+								[#assign maxSize = maxSize * zoneCount]
+							[/#if]
+							[#list 1..maxCount as index]
+								,"eipX${tier.Id}X${component.Id}X${index}Xip": {
+									"Value" : { "Ref" : "eipX${tier.Id}X${component.Id}X${index}" }
+								}
+								,"eipX${tier.Id}X${component.Id}X${index}Xid": {
+									"Value" : { "Fn::GetAtt" : ["eipX${tier.Id}X${component.Id}X${index}", "AllocationId"] }
+								}
+							[/#list]
+						[/#if]
 						[#assign count = count + 1]
 					[/#if]
 					[#-- ElastiCache --]
