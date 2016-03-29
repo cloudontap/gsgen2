@@ -702,7 +702,7 @@
 						},
 
 						[#if fixedIP]
-							[#list 1..maxCount as index]
+							[#list 1..maxSize as index]
 								"eipX${tier.Id}X${component.Id}X${index}": {
 									"Type" : "AWS::EC2::EIP",
 									"Properties" : {
@@ -781,8 +781,8 @@
 								  		"command" : "/opt/gosource/bootstrap/eip.sh",
 								  		"env" : { 
 								  			"EIP_ALLOCID" : { "Fn::Join" : [" ", [					  			
-								  				[#list 1..maxCount as index]
-								  					{ "Fn::GetAtt" : ["eipX${tier.Id}X${component.Id}X${index}", "AllocationId"] }[#if index != maxCount],[/#if]
+								  				[#list 1..maxSize as index]
+								  					{ "Fn::GetAtt" : ["eipX${tier.Id}X${component.Id}X${index}", "AllocationId"] }[#if index != maxSize],[/#if]
 								  				[/#list]
 								  			  ]]
 								  			}
@@ -1183,13 +1183,13 @@
 						"roleX${tier.Id}X${component.Id}XserviceXarn" : {
 							"Value" : { "Fn::GetAtt" : ["roleX${tier.Id}X${component.Id}Xservice", "Arn"] }
 						}
-						[#if ecs.AssignEIP?? && ecs.AssignEIP]
+						[#if ecs.FixedIP?? && ecs.FixedIP]
 							[#assign processorProfile = getProcessor(tier, component, "ECS")]
 							[#assign maxSize = processorProfile.MaxPerZone]
 							[#if multiAZ]
 								[#assign maxSize = maxSize * zoneCount]
 							[/#if]
-							[#list 1..maxCount as index]
+							[#list 1..maxSize as index]
 								,"eipX${tier.Id}X${component.Id}X${index}Xip": {
 									"Value" : { "Ref" : "eipX${tier.Id}X${component.Id}X${index}" }
 								}
