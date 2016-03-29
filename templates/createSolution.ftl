@@ -633,6 +633,7 @@
 										{
 											"Effect" : "Allow",
 											"Action" : [
+												"ec2:DescribeAddresses",
 												"ec2:AssociateAddress"
 											],
 											"Resource": "*"

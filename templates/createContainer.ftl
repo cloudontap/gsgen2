@@ -350,6 +350,7 @@
 						"ec2:DescribeRouteTables",
 						"ec2:CreateRoute",
 						"ec2:ReplaceRoute",
+						"ec2:DescribeAddresses",
 						"ec2:AssociateAddress"
 					  ],
 					  "Resource": "*"
