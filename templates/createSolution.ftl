@@ -850,7 +850,7 @@
 							[@createBlockDevices storageProfile=storageProfile /]
 							"SecurityGroups" : [ {"Ref" : "securityGroupX${tier.Id}X${component.Id}"} [#if securityGroupNAT != "none"], "${securityGroupNAT}"[/#if] ], 
 							"IamInstanceProfile" : { "Ref" : "instanceProfileX${tier.Id}X${component.Id}" },
-							"AssociatePublicIpAddress" : ${((solutionTier.RouteTable!tier.RouteTable) == "external")?string("true","false")},
+							"AssociatePublicIpAddress" : ${(((solutionTier.RouteTable!tier.RouteTable) == "external") && !fixedIP)?string("true","false")},
 							[#if (processorProfile.ConfigSet)??]
 								[#assign configSet = processorProfile.ConfigSet]
 							[#else]
