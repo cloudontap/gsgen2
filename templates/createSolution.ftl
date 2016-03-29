@@ -701,7 +701,7 @@
 						  }
 						},
 
-						[#if assignEIP]
+						[#if fixedIP]
 							[#list 1..maxCount as index]
 								"eipX${tier.Id}X${component.Id}X${index}": {
 									"Type" : "AWS::EC2::EIP",
@@ -776,8 +776,8 @@
 									"command" : "/opt/gosource/bootstrap/init.sh",
 									"ignoreErrors" : "false"
 								  }
-								  [#if assignEIP]
-									  ,"03AssignEIP" : {
+								  [#if fixedIP]
+									  ,"03AssignIP" : {
 								  		"command" : "/opt/gosource/bootstrap/eip.sh",
 								  		"env" : { 
 								  			"EIP_ALLOCID" : { "Fn::Join" : [" ", [					  			
