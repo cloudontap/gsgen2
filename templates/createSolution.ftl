@@ -629,6 +629,15 @@
 									  "Action": ["s3:GetObject"],
 									  "Resource": ["arn:aws:s3:::${credentialsBucket}/${accountId}/alm/docker/*"]
 									},
+									[#if fixedIP]
+										{
+											"Effect" : "Allow",
+											"Action" : [
+												"ec2:AssociateAddress"
+											],
+											"Resource": "*"
+										},
+									[/#if]
 									{
 										"Resource": [
 											"arn:aws:s3:::${codeBucket}",
