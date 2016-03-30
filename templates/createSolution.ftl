@@ -600,6 +600,33 @@
 								},
 							[/#list]
 						[/#if]
+						[#if ecs.Components??]
+							[#list ecs.Components as subcomponent]
+								[#if subcomponent.Ports??]
+									[#list ecs.Ports as port]
+										[#if port?is_hash]
+											[#assign portId = port.Id]
+										[#else]
+											[#assign portId = port]
+										[/#if]
+										"securityGroupIngressX${tier.Id}X${component.Id}X${ports[portId].Port?c}" : {
+										  "Type" : "AWS::EC2::SecurityGroupIngress",
+										  "Properties" : {
+											"GroupId": {"Ref" : "securityGroupX${tier.Id}X${component.Id}"},
+											"IpProtocol": "${ports[portId].IPProtocol}", 
+											"FromPort": "${ports[portId].Port?c}", 
+											"ToPort": "${ports[portId].Port?c}", 
+											[#if fixedIP && port?is_hash && port.ELB??]
+												"SourceSecurityGroupId": "${getKey("securityGroupXelbX"+port.ELB)}"
+											[#else]
+												"CidrIp": "0.0.0.0/0"
+											[/#if]
+										  }
+										},
+									[/#list]
+								[/#if]
+							[/#list]
+						[/#if]
 						
 						"ecsX${tier.Id}X${component.Id}" : {
 						  "Type" : "AWS::ECS::Cluster"
