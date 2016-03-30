@@ -603,7 +603,7 @@
 						[#if ecs.Components??]
 							[#list ecs.Components as subcomponent]
 								[#if subcomponent.Ports??]
-									[#list ecs.Ports as port]
+									[#list subcomponent.Ports as port]
 										[#if port?is_hash]
 											[#assign portId = port.Id]
 										[#else]
