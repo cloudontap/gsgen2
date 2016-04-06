@@ -418,9 +418,10 @@
 						  }
 						},
 	
+						[#assign ec2Count = 0]
 						[#list regionObject.Zones as zone]
 							[#if multiAZ || firstZone.Id = zone.Id]
-						
+							    [#if ec2Count > 0],[/#if]
 								"ec2InstanceX${tier.Id}X${component.Id}X${zone.Id}": {
 								  "Type": "AWS::EC2::Instance",
 								  "Metadata": {
@@ -563,6 +564,7 @@
 									}
 								}
 								[/#if]
+								[#assign ec2Count = ec2Count + 1]
 							[/#if]
 						[/#list]
 						[#assign count = count + 1]
