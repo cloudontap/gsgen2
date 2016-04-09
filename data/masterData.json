@@ -1,20 +1,4 @@
 {
-	"Profile" : {
-		"Type" : "MasterData",
-		"Schema" : {
-			"Name" : "MasterData",
-			"MinimumVersion" : {
-				"Major" : 1
-			}
-		},
-		"Title" : "Master Reference Lists",
-		"Description" : "Standard configurations and reference material",
-		"Version" :	{
-			"Major" : 1,
-			"Minor" : 0
-		}
-	},
-	
 	"Regions" : {
 		"ap-northeast-1" : {
 			"Id" : "ap-northeast-1",
@@ -141,7 +125,7 @@
 				"Centos" : {
 					"NAT" : "ami-e3217a80",
 					"EC2" : "ami-48d38c2b",
-					"ECS" : "ami-75a38416"
+					"ECS" : "ami-b8cbe8db"
 				}
 			}
 		},
@@ -356,7 +340,7 @@
 				"Centos" : {
 					"NAT" : "ami-77a4b816",
 					"EC2" : "ami-f0091d91",
-					"ECS" : "ami-02a24162"
+					"ECS" : "ami-c7a451a7"
 				}
 			}
 		}
