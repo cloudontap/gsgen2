@@ -470,13 +470,7 @@
 		[#assign solutionNATInstances = []]
 		[#list regionObject.Zones as zone]
 			[#if jumpServerPerAZ || firstZone.Id = zone.Id]
-				,"eipX${tier.Id}XnatX${zone.Id}": {
-				  "Type" : "AWS::EC2::EIP",
-				  "Properties" : {
-				  	"Domain" : "vpc"
-				  }
-				},
-				"asgX${tier.Id}XnatX${zone.Id}": {
+				,"asgX${tier.Id}XnatX${zone.Id}": {
 				  "DependsOn" : [ "subnetX${tier.Id}X${zone.Id}" ],
 				  "Type": "AWS::AutoScaling::AutoScalingGroup",
 				  "Metadata": {
@@ -618,7 +612,7 @@
       [#assign sliceCount = sliceCount + 1]
 	[/#if]
   
-	[#if !(slice??) || (slice?contain("s3"))]
+	[#if !(slice??) || (slice?contains("s3"))]
 		[#-- Create logs bucket --]
 		[#if sliceCount > 0],[/#if]"s3Xlogs" : {
 			"Type" : "AWS::S3::Bucket",
@@ -691,7 +685,7 @@
             [#assign sliceCount = sliceCount + 1]
 		[/#if]
     [/#if]
-	[#if !(slice??) || (slice?contains("vpc")]
+	[#if !(slice??) || (slice?contains("vpc"))]
 		[#if sliceCount > 0],[/#if]"vpcXcontainerXvpc" : 
 		{
 		  "Value" : { "Ref" : "vpc" }
