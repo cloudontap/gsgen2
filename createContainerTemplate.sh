@@ -94,6 +94,22 @@ ARGS="${ARGS} -v solution=${SOLUTIONFILE}"
 ARGS="${ARGS} -v container=${CONTAINERFILE}"
 ARGS="${ARGS} -v masterData=$BIN/data/masterData.json"
 
+pushd ${CF_DIR}  > /dev/null 2>&1
+if [[ $(ls cont*-${REGION}-stack.json 2> /dev/null | wc) != 0 ]]; then
+    STACKCOUNT=0
+    for f in $( ls cont*-${REGION}-stack.json 2> /dev/null); do
+        PREFIX=$(echo $f | awk -F "-${REGION}-stack.json" '{print $1}' | sed 's/-//g')
+        ARGS="${ARGS} -v ${PREFIX}Stack=${CF_DIR}/${f}"
+        if [[ ${STACKCOUNT} > 0 ]]; then
+            STACKS="${STACKS},"
+        fi
+        STACKS="${STACKS}\\\\\\\"${PREFIX}Stack\\\\\\\""
+        STACKCOUNT=${STACKCOUNT}+1
+    done
+fi
+popd  > /dev/null 2>&1
+ARGS="${ARGS} -v stacks=[${STACKS}]"
+
 CMD="${BIN}/gsgen.sh -t $TEMPLATE -d $TEMPLATEDIR -o $OUTPUT $ARGS"
 eval $CMD
 EXITSTATUS=$?

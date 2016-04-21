@@ -8,7 +8,14 @@
 [#assign solutionContainer = solutionObject.Container]
 [#-- Container --]
 [#assign containerObject = (container?eval).Container]
-[#-- Reference data --]
+[#-- Outputs from existing stacks --]
+[#assign stacksList = stacks?eval]
+[#assign stacks = []]
+[#list stacksList as stack]
+  [#assign stackEvaluation = "(" + stack + "?eval).Stacks[0]"]
+  [#assign json = stackEvaluation?eval]
+  [#assign stacks = stacks + [json]]
+[/#list][#-- Reference data --]
 [#assign master = masterData?eval]
 [#assign regions = master.Regions]
 [#assign environments = master.Environments]
@@ -79,6 +86,16 @@
 [#assign firstZone = regionObject.Zones?first]
 [#assign lastZone = regionObject.Zones?last]
 
+[#function getKey key]
+  [#list stacks as stack]
+    [#list stack.Outputs as pair]
+      [#if pair.OutputKey==key]
+        [#return pair.OutputValue]
+      [/#if]
+    [/#list]
+  [/#list]
+[/#function]
+
 [#function getProcessor tier component type]
     [#assign tc = tier.Id + "-" + component.Id]
     [#assign defaultProfile = "default"]
@@ -120,9 +137,30 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
   "Resources" : 
   {
-	[#if !(slice??) || (slice == "vpc")]
+    [#assign sliceCount = 0]
+	[#if !(slice??) || (slice?contains("eip"))]
+		[#-- Define EIPs --]
+		[#assign eipCount = 0]
+        [#if jumpServer]
+		    [#assign tier = tiers["mgmt"]]
+		    [#list regionObject.Zones as zone]
+			    [#if jumpServerPerAZ || firstZone.Id = zone.Id]
+			        [#if eipCount > 0],[/#if]
+				    "eipX${tier.Id}XnatX${zone.Id}": {
+				        "Type" : "AWS::EC2::EIP",
+				        "Properties" : {
+				  	        "Domain" : "vpc"
+				        }
+				    }
+				    [#assign eipCount = eipCount + 1]
+				[/#if]
+		    [/#list]
+		    [#assign sliceCount = sliceCount + 1]
+		[/#if]
+    [/#if]
+	[#if !(slice??) || (slice?contains("vpc"))]
 		[#-- Define VPC --]
-		"vpc" : {
+		[#if sliceCount > 0],[/#if]"vpc" : {
 		  "Type" : "AWS::EC2::VPC",
 		  "Properties" : {
 			"CidrBlock" : "${bClass}.0.0/16",
@@ -515,7 +553,13 @@
  						  "02ExecuteAllocateEIPScript" : {
 							"command" : "/opt/gosource/bootstrap/eip.sh",
 							"env" : { 
-								"EIP_ALLOCID" : { "Fn::GetAtt" : ["eipX${tier.Id}XnatX${zone.Id}", "AllocationId"] }
+							    [#if slice?? && slice?contains("eip")]
+							        [#-- Legacy code to support definition of eip and vpc in one template --]
+    							    "EIP_ALLOCID" : { "Fn::GetAtt" : ["eipX${tier.Id}XnatX${zone.Id}", "AllocationId"] }
+							    [#else]
+							        [#-- Normally assume eip defined in a separate template to the vpc --]
+     							    "EIP_ALLOCID" : "${getKey("eipX" + tier.Id + "XnatX" + zone.Id + "Xid")}"
+                               [/#if]
 							},
 							"ignoreErrors" : "false"
 						  }
@@ -571,11 +615,12 @@
 			[/#if]
 		[/#list]
 	  [/#if]
+      [#assign sliceCount = sliceCount + 1]
 	[/#if]
   
-	[#if !(slice??) || (slice == "s3")]
+	[#if !(slice??) || (slice?contain("s3"))]
 		[#-- Create logs bucket --]
-		[#if !(slice??)],[/#if]"s3Xlogs" : {
+		[#if sliceCount > 0],[/#if]"s3Xlogs" : {
 			"Type" : "AWS::S3::Bucket",
 			"Properties" : {
 				"BucketName" : "${logsBucket}",
@@ -619,23 +664,35 @@
 				]
 			}
 		}
+        [#assign sliceCount = sliceCount + 1]
 	[/#if]
   },
 
   "Outputs" : 
   {
-	[#if !(slice??) || (slice == "s3")]
-		"s3XcontainerXlogs" : 
-		{
-		  "Value" : { "Ref" : "s3Xlogs" }
-		},
-		"s3XcontainerXbackups" : 
-		{
-		  "Value" : { "Ref" : "s3Xbackups" }
-		}[#if !(slice??)],[/#if]
-	[/#if]
-	[#if !(slice??) || (slice == "vpc")]
-		"vpcXcontainerXvpc" : 
+    [#assign sliceCount = 0]
+	[#if !(slice??) || (slice?contains("eip"))]
+		[#-- Define EIPs --]
+		[#assign eipCount = 0]
+        [#if jumpServer]
+		    [#assign tier = tiers["mgmt"]]
+		    [#list regionObject.Zones as zone]
+			    [#if jumpServerPerAZ || firstZone.Id = zone.Id]
+			        [#if eipCount > 0],[/#if]
+					"eipX${tier.Id}XnatX${zone.Id}Xip": {
+						"Value" : { "Ref" : "eipX${tier.Id}XnatX${zone.Id}" }
+					},
+					"eipX${tier.Id}XnatX${zone.Id}Xid": {
+						"Value" : { "Fn::GetAtt" : ["eipX${tier.Id}XnatX${zone.Id}", "AllocationId"] }
+					}
+				    [#assign eipCount = eipCount + 1]
+				[/#if]
+		    [/#list]
+            [#assign sliceCount = sliceCount + 1]
+		[/#if]
+    [/#if]
+	[#if !(slice??) || (slice?contains("vpc")]
+		[#if sliceCount > 0],[/#if]"vpcXcontainerXvpc" : 
 		{
 		  "Value" : { "Ref" : "vpc" }
 		},
@@ -649,16 +706,6 @@
 			{
 				"Value" : { "Ref" : "securityGroupX${tier.Id}XallXnat" }
 			}
-			[#list regionObject.Zones as zone]
-				[#if jumpServerPerAZ || firstZone.Id = zone.Id]
-					,"eipX${tier.Id}XnatX${zone.Id}Xip": {
-						"Value" : { "Ref" : "eipX${tier.Id}XnatX${zone.Id}" }
-					}
-					,"eipX${tier.Id}XnatX${zone.Id}Xid": {
-						"Value" : { "Fn::GetAtt" : ["eipX${tier.Id}XnatX${zone.Id}", "AllocationId"] }
-					}
-				[/#if]
-			[/#list]
 		[/#if]
 		[#list solutionTiers as solutionTier]
 			[#assign tier = tiers[solutionTier.Id]]
@@ -669,7 +716,19 @@
 				}
 			[/#list]
 		[/#list]
+        [#assign sliceCount = sliceCount + 1]
     [/#if]
+	[#if !(slice??) || (slice?contains("s3"))]
+		[#if sliceCount > 0],[/#if]"s3XcontainerXlogs" : 
+		{
+		  "Value" : { "Ref" : "s3Xlogs" }
+		},
+		"s3XcontainerXbackups" : 
+		{
+		  "Value" : { "Ref" : "s3Xbackups" }
+		}
+        [#assign sliceCount = sliceCount + 1]
+	[/#if]
   }
 }
 
