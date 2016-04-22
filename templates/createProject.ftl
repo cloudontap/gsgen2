@@ -33,30 +33,35 @@
 [/#switch]
 [#assign regionId = regionObject.Id]
 [#assign categoryId = categoryObject.Id]
+[#assign snsEnabled = false]
 {
 	"AWSTemplateFormatVersion" : "2010-09-09",
 	"Resources" : { 
+	    [#assign count = 0]
 		[#-- SNS for project --]
-		"snsXalerts" : {
-			"Type": "AWS::SNS::Topic",
-			"Properties" : {
-				"DisplayName" : "${(projectName + "-alerts")[0..9]}",
-				"TopicName" : "${projectName}-alerts",
-				"Subscription" : [
-					{
-						"Endpoint" : "alerts@${projectDomain}", 
-						"Protocol" : "email"
-					}
-				]
-			}
-		} 
+		[#if snsEnabled]
+            "snsXalerts" : {
+                "Type": "AWS::SNS::Topic",
+                "Properties" : {
+                    "DisplayName" : "${(projectName + "-alerts")[0..9]}",
+                    "TopicName" : "${projectName}-alerts",
+                    "Subscription" : [
+                        {
+                            "Endpoint" : "alerts@${projectDomain}", 
+                            "Protocol" : "email"
+                        }
+                    ]
+                }
+            } 
+            [#assign count = count + 1]
+		[/#if]
 		[#-- Shared project level resources if we are in the project region --]
 		[#if (regionId == projectRegionId)]
 			[#if solutionObject.SharedComponents??]
 				[#list solutionObject.SharedComponents as component] 
 					[#if component.S3??]
 						[#assign s3 = component.S3]
-						,"s3X${component.Id}" : {
+						[#if count > 0],[/#if]"s3X${component.Id}" : {
 							"Type" : "AWS::S3::Bucket",
 							"Properties" : {
 								[#if s3.Name??]
@@ -70,6 +75,7 @@
 								]
 							}
 						}
+						[#assign count = count + 1]
 					[/#if]
 				[/#list]
 			[/#if]			
@@ -77,11 +83,15 @@
 	},
 
 	"Outputs" : {
-		"snsXprojectXalertsX${regionId?replace("-","")}" : {
-			"Value" : { "Ref" : "snsXalerts" }
-		}
+	    [#assign count = 0]
+		[#if snsEnabled]
+		    "snsXprojectXalertsX${regionId?replace("-","")}" : {
+			    "Value" : { "Ref" : "snsXalerts" }
+			}
+            [#assign count = count + 1]
+		[/#if]
 		[#if (regionId == projectRegionId)]
-			,"domainXprojectXdomain" : {
+			[#if count > 0],[/#if]"domainXprojectXdomain" : {
 				"Value" : "${projectDomain}"
 			}
 			[#if solutionObject.SharedComponents??]
