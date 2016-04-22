@@ -5,7 +5,7 @@ function usage() {
   echo -e "\nUsage: $(basename $0) -s SLICE"
   echo -e "\nwhere\n"
   echo -e "    -h shows this text"
-  echo -e "(o) -s SLICE is the slice of the solution to be included in the template (currently \"vpc\" or \"s3\")"
+  echo -e "(o) -s SLICE is the slice of the solution to be included in the template (currently \"s3\", \"vpc\" or \"eip\")"
   echo -e "\nNOTES:\n"
   echo -e "1) You must be in the container specific directory when running this script"
   echo -e ""
