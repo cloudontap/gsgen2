@@ -368,7 +368,6 @@
 							  } ]
 							},
 							"Path": "/",
-							"ManagedPolicyArns" : ["arn:aws:iam::aws:policy/AdministratorAccess"],
 							"Policies": [
 							  {
 								"PolicyName": "${tier.Id}-${component.Id}-basic",
