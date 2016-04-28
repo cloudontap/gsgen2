@@ -141,6 +141,7 @@
 
 [#function getStorage tier component type]
     [#assign tc = tier.Id + "-" + component.Id]
+    [#assign defaultProfile = "default"]
     [#if (containerObject.Storage[tc])??]
     	[#return containerObject.Storage[tc]]
     [/#if]
@@ -1135,6 +1136,96 @@
 						}
 						[#assign count = count + 1]
 					[/#if]
+					[#-- ElasticSearch --]
+					[#if component.ElasticSearch??]
+						[#assign es = component.ElasticSearch]
+						[#assign processorProfile = getProcessor(tier, component, "ElasticSearch")]
+						[#assign storageProfile = getStorage(tier, component, "ElasticSearch")]
+                        "esX${tier.Id}X${component.Id}":{
+                            "Type" : "AWS::Elasticsearch::Domain",
+                            "Properties" : {
+                                "AccessPolicies" : {
+                                    "Version": "2012-10-17",
+                                    "Statement": [
+                                        {
+                                            "Sid": "",
+                                            "Effect": "Allow",
+                                            "Principal": {
+                                                "AWS": "*"
+                                            },
+                                            "Action": "es:*",
+                                            "Resource": { "Fn::GetAtt" : ["esX${tier.Id}X${component.Id}", "DomainArn"] },
+                                            "Condition": {
+                                                "IpAddress": {
+                                                    [#assign ipCount = 0]
+                                                    "aws:SourceIp": [
+                                                        [#list regionObject.Zones as zone]
+                                                            [#if ipCount > 0],[/#if]
+                                                            [#if (getKey("eipXmgmtXnatX" + zone.Id + "Xip")??)]"${getKey("eipXmgmtXnatX" + zone.Id + "Xip")}"[/#if]
+                                                            [#assign ipCount = ipCount + 1]
+				                                        [/#list]
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ]
+								},
+								[#if es.AdvancedOptions??]
+                                    "AdvancedOptions" : {
+                                        [#list es.AdvancedOptions as option]
+                                            "${option.Id}" : "${option.Value}"[#if option.Id != es.AdvancedOptions?last.Id],[/#if]
+                                        [/#list]
+                                    },
+                                [/#if]
+                                "DomainName" : "${projectName}-${containerName}-${tier.Name}-${component.Name}",
+                                [#if (storageProfile.Volumes)?? && (storageProfile.Volumes?size > 0)]
+                                    [#assign volume = storageProfile.Volumes[0]]
+                                    "EBSOptions" : {
+                                        "EBSEnabled" : true,
+                                        [#if volume.Iops??]"Iops" : ${volume.Iops},[/#if]
+                                        "VolumeSize" : ${volume.Size},
+                                        [#if volume.Type??]
+                                            "VolumeType" : "${volume.Type}"
+                                        [#else]
+                                            "VolumeType" : "gp2"
+                                        [/#if]
+		                            },
+		                        [/#if]
+                                "ElasticsearchClusterConfig" : {
+                                    [#if processorProfile.Master??]
+                                        [#assign master = processorProfile.Master]
+                                        "DedicatedMasterEnabled" : true,
+                                        "DedicatedMasterCount" : ${master.Count},
+                                        "DedicatedMasterType" : "${master.Processor}",
+                                    [#else]
+                                        "DedicatedMasterEnabled" : false,
+                                    [/#if]
+                                    "InstanceType" : "${processorProfile.Processor}",
+                                    "ZoneAwarenessEnabled" : ${multiAZ?string("true","false")},
+                                    [#if multiAZ]
+                                        "InstanceCount" : ${processorProfile.CountPerZone * zoneCount}
+                                    [#else]
+                                        "InstanceCount" : ${processorProfile.CountPerZone}
+                                    [/#if]
+                                },
+                                [#if (es.SnapShot.Hour)??]
+                                    "SnapshotOptions" : {
+                                        "AutomatedSnapshotStartHour" : ${es.SnapShot.Hour}
+                                    },
+                                [/#if]
+                                "Tags" : [
+                                    { "Key" : "gs:account", "Value" : "${accountId}" },
+                                    { "Key" : "gs:project", "Value" : "${projectId}" },
+                                    { "Key" : "gs:container", "Value" : "${containerId}" },
+                                    { "Key" : "gs:environment", "Value" : "${environmentId}" },
+                                    { "Key" : "gs:category", "Value" : "${categoryId}" },
+                                    { "Key" : "gs:tier", "Value" : "${tier.Id}" },
+                                    { "Key" : "gs:component", "Value" : "${component.Id}" }
+                                ]
+						    }
+						}
+						[#assign count = count + 1]
+					[/#if]
 				[/#if]
 			[/#list]
 		[/#if]
@@ -1243,7 +1334,7 @@
 								"Value" : { "Fn::GetAtt" : ["cacheX${tier.Id}X${component.Id}", "ConfigurationEndpoint.Port"] }
 							}
 							[#assign count = count + 1]
-							[/#if]
+						[/#if]
 					[/#if]
 					[#-- RDS --]
 					[#if component.RDS??]
@@ -1263,6 +1354,21 @@
 						"rdsX${tier.Id}X${component.Id}Xpassword" : {
 							"Value" : "${credentialsObject[tier.Id + "-" + component.Id].Login.Password}"
 						}
+						[#assign count = count + 1]
+					[/#if]
+					[#-- ElasticSearch --]
+					[#if component.ElasticSearch??]
+						[#assign es = component.ElasticSearch]
+						[#if count > 0],[/#if]
+						"esX${tier.Id}X${component.Id}" : {
+							"Value" : { "Ref" : "esX${tier.Id}X${component.Id}" }
+						},
+                        "esX${tier.Id}X${component.Id}Xdns" : {
+                            "Value" : { "Fn::GetAtt" : ["esX${tier.Id}X${component.Id}", "DomainEndpoint"] }
+                        },
+                        "esX${tier.Id}X${component.Id}Xarn" : {
+                            "Value" : { "Fn::GetAtt" : ["esX${tier.Id}X${component.Id}", "DomainArn"] }
+                        }
 						[#assign count = count + 1]
 					[/#if]
 				[/#if]

@@ -718,6 +718,10 @@
 			},
 			"RDS" : {
 				"Processor" : "db.t2.small"
+			},
+			"ElasticSearch" : {
+				"Processor" : "m3.medium.elasticsearch",
+				"CountPerZone" : 1
 			}
 		}
 	},
