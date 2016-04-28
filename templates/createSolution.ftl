@@ -1154,7 +1154,7 @@
                                                 "AWS": "*"
                                             },
                                             "Action": "es:*",
-                                            "Resource": { "Fn::GetAtt" : ["esX${tier.Id}X${component.Id}", "DomainArn"] },
+                                            "Resource": "*",
                                             "Condition": {
                                                 "IpAddress": {
                                                     [#assign ipCount = 0]
