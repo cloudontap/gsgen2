@@ -1177,7 +1177,7 @@
                                         [/#list]
                                     },
                                 [/#if]
-                                "DomainName" : "${projectName}-${containerName}-${tier.Name}-${component.Name}",
+                                "DomainName" : "${projectName}-${containerId}-${tier.Id}-${component.Id}",
                                 [#if (storageProfile.Volumes)?? && (storageProfile.Volumes?size > 0)]
                                     [#assign volume = storageProfile.Volumes[0]]
                                     "EBSOptions" : {
@@ -1208,9 +1208,9 @@
                                         "InstanceCount" : ${processorProfile.CountPerZone}
                                     [/#if]
                                 },
-                                [#if (es.SnapShot.Hour)??]
+                                [#if (es.Snapshot.Hour)??]
                                     "SnapshotOptions" : {
-                                        "AutomatedSnapshotStartHour" : ${es.SnapShot.Hour}
+                                        "AutomatedSnapshotStartHour" : ${es.Snapshot.Hour}
                                     },
                                 [/#if]
                                 "Tags" : [
