@@ -352,7 +352,13 @@
 			"Id" : "alm",
 			"Name" : "alm",
 			"Description" : "Normally only one environment for the alm. Entry mainly here for naming consistency",
-			"Category" : "alm"
+			"Category" : "alm",
+			"Logs" : {
+			    "Expiration" : 30
+			},
+			"Backups" : {
+			    "Expiration" : 90
+			}
 		},
 		"dev" : {
 			"Title" : "Development Environment",
@@ -381,7 +387,13 @@
 			"Id" : "int",
 			"Name" : "integration",
 			"Description" : "Mainly for devs to confirm components work together",
-			"Category" : "test"
+			"Category" : "test",
+			"Logs" : {
+			    "Expiration" : 30
+			},
+			"Backups" : {
+			    "Expiration" : 90
+			}
 		},
 		"aat" : {
 			"Title" : "Automated Acceptance Environment",
