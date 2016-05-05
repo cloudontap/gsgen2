@@ -85,7 +85,7 @@
 [#assign logsBucket = "logs." + containerDomain]
 [#assign backupsBucket = "backups." + containerDomain]
 [#assign configurationBucket = "configuration." + accountDomain]
-S3
+
 [#-- Optimise some repeated loops --]
 [#assign firstZone = regionObject.Zones?first]
 [#assign lastZone = regionObject.Zones?last]
