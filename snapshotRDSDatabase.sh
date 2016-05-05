@@ -18,7 +18,7 @@ function usage() {
   echo -e "(o) -s SUFFIX is appended to the snapshot identifier"
   echo -e "(o) -t TIER is the name of the database tier in the solution. Default is \"${TIER_DEFAULT}\""
   echo -e "\nNOTES:\n"
-  echo -e "1. Snapshot identifer takes the form {project}-{environment}-database-{component}-datetime-{suffix}"
+  echo -e "1. Snapshot identifer takes the form {project}-{environment}-{tier}-{component}-datetime-{suffix}"
   echo -e "2. RETAIN and AGE may be used together. If both are present, RETAIN is applied first"
   echo -e ""
   exit 1
