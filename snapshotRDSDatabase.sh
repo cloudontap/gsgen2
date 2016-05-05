@@ -3,29 +3,37 @@
 trap 'find . -name STATUS.txt -exec rm {} \; ; exit $RESULT' EXIT SIGHUP SIGINT SIGTERM
 
 DELAY_DEFAULT=30
+TIER_DEFAULT="database"
 function usage() {
   echo -e "\nSnapshot an RDS Database" 
-  echo -e "\nUsage: $(basename $0) -i COMPONENT -s SUFFIX -c -m -d DELAY -r RETAIN\n"
+  echo -e "\nUsage: $(basename $0) -t TIER -i COMPONENT -s SUFFIX -c -m -d DELAY -r RETAIN -a AGE\n"
   echo -e "\nwhere\n"
+  echo -e "(o) -a AGE is the maximum age in days of snapshots to retain"
   echo -e "(o) -c (CREATE ONLY) initiates but does not monitor the snapshot creation process"
   echo -e "(o) -d DELAY is the interval between checking the progress of snapshot creation. Default is ${DELAY_DEFAULT} seconds"
   echo -e "    -h shows this text"
-  echo -e "(m) -i COMPONENT is the identifier of the database component in the solution"
+  echo -e "(m) -i COMPONENT is the name of the database component in the solution"
   echo -e "(o) -m (MONITOR ONLY) monitors but does not initiate the snapshot creation process"
   echo -e "(o) -r RETAIN is the count of snapshots to retain"
   echo -e "(o) -s SUFFIX is appended to the snapshot identifier"
+  echo -e "(o) -t TIER is the name of the database tier in the solution. Default is \"${TIER_DEFAULT}\""
   echo -e "\nNOTES:\n"
-  echo -e "1. Snapshot identifer takes the form {project}-{environment}-database-{component}-{suffix}-datetime"
+  echo -e "1. Snapshot identifer takes the form {project}-{environment}-database-{component}-datetime-{suffix}"
+  echo -e "2. RETAIN and AGE may be used together. If both are present, RETAIN is applied first"
   echo -e ""
   exit 1
 }
 
 DELAY=${DELAY_DEFAULT}
+TIER=${TIER_DEFAULT}
 CREATE=true
 WAIT=true
 # Parse options
-while getopts ":cd:hi:mr:s:" opt; do
+while getopts ":a:cd:hi:mr:s:t:" opt; do
   case $opt in
+    a)
+      AGE=$OPTARG
+      ;;
     c)
       WAIT=false
       ;;
@@ -46,6 +54,9 @@ while getopts ":cd:hi:mr:s:" opt; do
       ;;
     s)
       SUFFIX=$OPTARG
+      ;;
+    t)
+      TIER=$OPTARG
       ;;
     \?)
       echo -e "\nInvalid option: -$OPTARG" 
@@ -96,13 +107,12 @@ if [[ "$?" -eq 0 ]]; then
     PROFILE="--profile ${OAID}"
 fi
 
-DB_INSTANCE_IDENTIFIER="${PID}-${CONTAINER}-database-${COMPONENT}"
-DB_SNAPSHOT_IDENTIFIER="${DB_INSTANCE_IDENTIFIER}"
+DB_INSTANCE_IDENTIFIER="${PID}-${CONTAINER}-${TIER}-${COMPONENT}"
+DB_SNAPSHOT_IDENTIFIER="${DB_INSTANCE_IDENTIFIER}-$(date -u +%Y-%m-%d-%H-%M-%S)"
 if [[ "${SUFFIX}" != "" ]]; then
     DB_SNAPSHOT_IDENTIFIER="${DB_SNAPSHOT_IDENTIFIER}-${SUFFIX}"
 fi
 
-DB_SNAPSHOT_IDENTIFIER="${DB_SNAPSHOT_IDENTIFIER}-$(date -u +%Y-%m-%d-%H-%M-%S)"
 
 if [[ "${CREATE}" == "true" ]]; then
 	aws ${PROFILE} --region ${REGION} rds create-db-snapshot --db-snapshot-identifier ${DB_SNAPSHOT_IDENTIFIER} --db-instance-identifier ${DB_INSTANCE_IDENTIFIER}
@@ -110,11 +120,31 @@ if [[ "${CREATE}" == "true" ]]; then
 	if [ "$RESULT" -ne 0 ]; then exit; fi
 fi
 
-if [[ "${RETAIN}" != "" ]]; then
-    LIST=$(aws ${PROFILE} --region ${REGION} rds describe-db-snapshots --snapshot-type manual | grep DBSnapshotIdentifier | grep ${DB_INSTANCE_IDENTIFIER} | cut -d'"' -f 4 | sort | head -n -${RETAIN})
+if [[ ("${RETAIN}" != "") || ("${AGE}" != "") ]]; then
+    if [[ "${RETAIN}" != "" ]]; then
+        LIST=$(aws ${PROFILE} --region ${REGION} rds describe-db-snapshots --snapshot-type manual | grep DBSnapshotIdentifier | grep ${DB_INSTANCE_IDENTIFIER} | cut -d'"' -f 4 | sort | head -n -${RETAIN})
+    else
+        LIST=$(aws ${PROFILE} --region ${REGION} rds describe-db-snapshots --snapshot-type manual | grep DBSnapshotIdentifier | grep ${DB_INSTANCE_IDENTIFIER} | cut -d'"' -f 4 | sort)
+    fi
+#    echo LIST=$LIST
+    if [[ "${AGE}" != "" ]]; then
+        BASELIST=${LIST}
+        LIST=""
+        LASTDATE=$(date --utc +%Y%m%d%H%M%S -d "$AGE days ago")
+        for SNAPSHOT in $(echo $BASELIST); do
+            DATEPLUSSUFFIX=${SNAPSHOT#"$DB_INSTANCE_IDENTIFIER-"}
+            SUFFIX=${DATEPLUSSUFFIX#????-??-??-??-??-??}
+            SNAPSHOTDATE=$(echo ${DATEPLUSSUFFIX%"$SUFFIX"} | tr -d "-")
+#            echo LASTDATE=$LASTDATE, SNAPSHOT=$SNAPSHOTDATE
+            if [[ $LASTDATE > $SNAPSHOTDATE ]]; then
+                LIST="${LIST} ${SNAPSHOT}"
+            fi
+        done        
+    fi
+#    echo LIST=$LIST
     if [[ "${LIST}" != "" ]]; then
-        for s in $(echo $LIST); do
-            aws ${PROFILE} --region ${REGION} rds delete-db-snapshot --db-snapshot-identifier $s
+        for SNAPSHOT in $(echo $LIST); do
+            aws ${PROFILE} --region ${REGION} rds delete-db-snapshot --db-snapshot-identifier $SNAPSHOT
         done
     fi
 fi
