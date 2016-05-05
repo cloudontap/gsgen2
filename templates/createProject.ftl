@@ -73,6 +73,19 @@
 									{ "Key" : "gs:project", "Value" : "${projectId}" },
 									{ "Key" : "gs:category", "Value" : "${categoryId}" }
 								]
+                                [#if s3.Lifecycle??]
+                                    ,"LifecycleConfiguration" : {
+                                        "Rules" : [
+                                            {
+                                                "Id" : "default",
+                                                [#if s3.Lifecycle.Expiration??]
+                                                   "ExpirationInDays" : ${s3.Lifecycle.Expiration},
+                                                [/#if]
+                                                "Status" : "Enabled"
+                                            }
+                                        ]
+                                    }
+                                [/#if]
 							}
 						}
 						[#assign count = count + 1]

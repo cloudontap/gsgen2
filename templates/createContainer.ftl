@@ -81,6 +81,9 @@
 [#assign logsBucket = "logs." + containerDomain]
 [#assign backupsBucket = "backups." + containerDomain]
 
+[#assign logsExpiration = (containerObject.Logs.Expiration)!(solutionObject.Logs.Expiration)!(environmentObject.Logs.Expiration)!90]
+[#assign backupsExpiration = (containerObject.Backups.Expiration)!(solutionObject.Backups.Expiration)!(environmentObject.Backups.Expiration)!365]
+
 [#-- Optimise some repeated loops --]
 [#assign lastTier = solutionTiers?last]
 [#assign firstZone = regionObject.Zones?first]
@@ -623,7 +626,16 @@
 					{ "Key" : "gs:container", "Value" : "${containerId}" },
 					{ "Key" : "gs:environment", "Value" : "${environmentId}" },
 					{ "Key" : "gs:category", "Value" : "${categoryId}" }
-				]
+				],
+				"LifecycleConfiguration" : {
+				    "Rules" : [
+				        {
+				            "Id" : "default",
+				            "ExpirationInDays" : ${logsExpiration},
+				            "Status" : "Enabled"
+				        }
+				    ]
+				}
 			}
 		},
 		[#-- Ensure ELBs can write to the logs bucket --]
@@ -655,7 +667,16 @@
 					{ "Key" : "gs:container", "Value" : "${containerId}" },
 					{ "Key" : "gs:environment", "Value" : "${environmentId}" },
 					{ "Key" : "gs:category", "Value" : "${categoryId}" }
-				]
+				],
+				"LifecycleConfiguration" : {
+				    "Rules" : [
+				        {
+				            "Id" : "default",
+				            "ExpirationInDays" : ${backupsExpiration},
+				            "Status" : "Enabled"
+				        }
+				    ]
+				}
 			}
 		}
         [#assign sliceCount = sliceCount + 1]

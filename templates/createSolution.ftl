@@ -85,7 +85,7 @@
 [#assign logsBucket = "logs." + containerDomain]
 [#assign backupsBucket = "backups." + containerDomain]
 [#assign configurationBucket = "configuration." + accountDomain]
-
+S3
 [#-- Optimise some repeated loops --]
 [#assign firstZone = regionObject.Zones?first]
 [#assign lastZone = regionObject.Zones?last]
@@ -261,6 +261,19 @@
 							  { "Key" : "gs:tier", "Value" : "${tier.Id}" },
 							  { "Key" : "gs:component", "Value" : "${component.Id}" }
 							]
+							[#if s3.Lifecycle??]
+                                ,"LifecycleConfiguration" : {
+                                    "Rules" : [
+                                        {
+                                            "Id" : "default",
+                                            [#if s3.Lifecycle.Expiration??]
+                                               "ExpirationInDays" : ${s3.Lifecycle.Expiration},
+                                            [/#if]
+                                            "Status" : "Enabled"
+                                        }
+                                    ]
+                                }
+							[/#if]
 						  }
 						}
 						[#assign count = count + 1]
