@@ -2,22 +2,27 @@
 
 function usage() {
   echo -e "\nCreate an application specific CloudFormation template" 
-  echo -e "\nUsage: $(basename $0) -c CONFIGREFERENCE -s SLICE"
+  echo -e "\nUsage: $(basename $0) -c CONFIGREFERENCE -s SLICE -d DEPLOYMENT_SLICE"
   echo -e "\nwhere\n"
   echo -e "(m) -c CONFIGREFERENCE is the id of the configuration (commit id, branch id, tag)"
+  echo -e "(o) -d DEPLOYMENT_SLICE is the slice of the solution to be used to obtain deployment information"
   echo -e "    -h shows this text"
   echo -e "(o) -s SLICE is the slice of the solution to be included in the template"
   echo -e "\nNOTES:\n"
   echo -e "1) You must be in the container specific directory when running this script"
+  echo -e "2) If no DEPLOYMENT_SLICE is provided, SLICE is used to obtain deployment information"
   echo -e ""
   exit 1
 }
 
 # Parse options
-while getopts ":c:hs:" opt; do
+while getopts ":c:d:hs:" opt; do
   case $opt in
     c)
       CONFIGREFERENCE=$OPTARG
+      ;;
+    d)
+      DEPLOYMENT_SLICE=$OPTARG
       ;;
     h)
       usage
@@ -66,14 +71,17 @@ DEPLOYMENTS_DIR="${ROOT_DIR}/config/deployments"
 PROJECT_DEPLOY_DIR="${DEPLOYMENTS_DIR}/${PID}"
 CONTAINER_DEPLOY_DIR="${PROJECT_DEPLOY_DIR}/${CONTAINER}"
 DEPLOY_DIR="${CONTAINER_DEPLOY_DIR}"
-if [[ "${SLICE}" != "" ]]; then DEPLOY_DIR="${DEPLOY_DIR}/${SLICE}"; fi
-
+if [[ "${DEPLOYMENT_SLICE}" != "" ]]; then 
+    DEPLOY_DIR="${DEPLOY_DIR}/${DEPLOYMENT_SLICE}"
+else
+    if [[ "${SLICE}" != "" ]]; then 
+        DEPLOY_DIR="${DEPLOY_DIR}/${SLICE}"; 
+    fi
+fi
 ORGANISATIONFILE="../../organisation.json"
 ACCOUNTFILE="../../account.json"
 PROJECTFILE="../project.json"
 CONTAINERFILE="container.json"
-BUILDFILE="${DEPLOY_DIR}/build.ref"
-CONFIGURATIONFILE="${DEPLOY_DIR}/config.json"
 CREDENTIALSFILE="${CONTAINER_CREDS_DIR}/credentials.json"
 ACCOUNTCREDENTIALSFILE="${ACCOUNT_CREDS_DIR}/credentials.json"
 
@@ -88,12 +96,23 @@ if [[ ! -f ${CONTAINERFILE} ]]; then
     usage
 fi 
 
-if [[ ! -f ${BUILDFILE} ]]; then
-    echo -e "\nNo \"${BUILDFILE}\" file present. Deployment configuration needs to be set up. Nothing to do."
-    usage
-fi 
+if [[ -d ${DEPLOY_DIR} ]]; then
+    BUILDFILE="${DEPLOY_DIR}/build.ref"
+    CONFIGURATIONFILE="${DEPLOY_DIR}/config.json"
 
-BUILDREFERENCE=$(cat ${BUILDFILE})
+    if [[ ! -f ${CONFIGURATIONFILE} ]]; then
+        echo -e "\nNo \"${CONFIGURATIONFILE}\" file present. Assuming no deployment configuration required.\n"
+        CONFIGURATIONFILE=
+    fi
+
+    if [[ ! -f ${BUILDFILE} ]]; then
+        echo -e "\nNo \"${BUILDFILE}\" file present. Assuming no build reference required.\n"
+    else
+        BUILDREFERENCE=$(cat ${BUILDFILE})
+    fi
+else
+    echo -e "\nNo \"${DEPLOY_DIR}\" directory present. Assuming no deployment information required.\n"    
+fi
 
 if [[ -e ${ACCOUNTFILE} ]]; then
   ACCOUNTREGION=$(grep '"Region"' ${ACCOUNTFILE} | cut -d '"' -f 4)
@@ -145,9 +164,13 @@ ARGS="${ARGS} -v container=${CONTAINERFILE}"
 ARGS="${ARGS} -v credentials=${CREDENTIALSFILE}"
 ARGS="${ARGS} -v accountCredentials=${ACCOUNTCREDENTIALSFILE}"
 ARGS="${ARGS} -v masterData=$BIN/data/masterData.json"
-ARGS="${ARGS} -v \"buildReference=${BUILDREFERENCE}\""
+if [[ "${BUILDREFERENCE}" != "" ]]; then
+    ARGS="${ARGS} -v \"buildReference=${BUILDREFERENCE}\""
+fi
 ARGS="${ARGS} -v configurationReference=$CONFIGREFERENCE"
-ARGS="${ARGS} -v configuration=${CONFIGURATIONFILE}"
+if [[ "${CONFIGURATIONFILE}" != "" ]]; then
+    ARGS="${ARGS} -v configuration=${CONFIGURATIONFILE}"
+fi
 
 pushd ${CF_DIR}  > /dev/null 2>&1
 STACKCOUNT=0
