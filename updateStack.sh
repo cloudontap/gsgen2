@@ -156,8 +156,10 @@ fi
 
 pushd ${CF_DIR} > /dev/null 2>&1
 
+cat $TEMPLATE | jq -c . > stripped-${TEMPLATE}
+
 if [[ "${UPDATE}" = "true" ]]; then
-    aws ${PROFILE} --region ${REGION} cloudformation update-stack --stack-name $STACKNAME --template-body file://$TEMPLATE --capabilities CAPABILITY_IAM
+    aws ${PROFILE} --region ${REGION} cloudformation update-stack --stack-name $STACKNAME --template-body file://stripped-${TEMPLATE} --capabilities CAPABILITY_IAM
 fi
 
 RESULT=1

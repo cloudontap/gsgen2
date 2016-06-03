@@ -160,6 +160,8 @@ fi
 
 pushd ${CF_DIR} > /dev/null 2>&1
 
+cat $TEMPLATE | jq -c . > stripped-${TEMPLATE}
+
 if [[ "${CREATE}" == "true" ]]; then
 	DOCREATE="true"
 	if [[ "${CHECK}" == "false" ]]; then
@@ -168,7 +170,7 @@ if [[ "${CREATE}" == "true" ]]; then
 		if [ "$RESULT" -eq 0 ]; then DOCREATE="false"; fi
 	fi
 	if [[ "${DOCREATE}" == "true" ]]; then
-		aws ${PROFILE} --region ${REGION} cloudformation create-stack --stack-name $STACKNAME --template-body file://$TEMPLATE --capabilities CAPABILITY_IAM
+		aws ${PROFILE} --region ${REGION} cloudformation create-stack --stack-name $STACKNAME --template-body file://stripped-${TEMPLATE} --capabilities CAPABILITY_IAM
 		RESULT=$?
 		if [ "$RESULT" -ne 0 ]; then exit; fi
 	fi
