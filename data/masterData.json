@@ -739,6 +739,10 @@
 	},
 	
 	"Ports" : {
+		"ednp" : {
+			"Port" : 25672,
+			"IPProtocol" : "tcp"
+		},
 		"elasticsearch" : {
 			"Port" : 9200,
 			"Protocol" : "HTTP",
@@ -750,6 +754,10 @@
 				"Interval" : "30",
 				"Timeout" : "5"
 			}
+		},
+		"epmd" : {
+			"Port" : 4369,
+			"IPProtocol" : "tcp"
 		},
 		"http" : {
 			"Port" : 80,
@@ -852,6 +860,22 @@
 		"postgresql" : {
 			"Port" : 5432,
 			"IPProtocol" : "tcp"
+		},
+		"rabbit" : {
+			"Port" : 5672,
+			"IPProtocol" : "tcp"
+		},
+		"rabbit-ui" : {
+			"Port" : 15672,
+			"Protocol" : "HTTP",
+			"IPProtocol" : "tcp",
+			"HealthCheck" : {
+				"Path" : "/",
+				"HealthyThreshold" : "2",
+				"UnhealthyThreshold" : "3",
+				"Interval" : "30",
+				"Timeout" : "5"
+			}
 		},
 		"redis" : {
 			"Port" : 6379,
